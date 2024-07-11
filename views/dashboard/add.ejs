@@ -1,0 +1,65 @@
+<div class="container-fluid container-fluid-custom pb-5 mb-5">
+
+  <div class="row mb-4">
+    <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item active">Add Note</li>
+        </ol>
+      </nav>
+      <div class="col d-flex justify-content-between align-items-center">
+        <h1 class="h3">Add Note</h1>
+        <div class="form-check form-switch float-right">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+          <label class="form-check-label" for="flexSwitchCheckDefault">Code</label>
+   
+      </div>
+      
+      </div>
+
+    </div>
+  </div>
+
+
+  <form action="/dashboard/addNote" method="POST" class="position-relative">
+   
+    <div class="form-group mb-4 position-absolute" style="left:1px; top:1px; right: 1px;">
+      <input type="text" class="form-control fw-bold border-0 fs-4" id="title" name="title" placeholder="Title" required>
+    </div>
+
+    <div class="form-group mb-4">
+      <textarea required class="form-control pt-5 fs-4" id="body" name="body" placeholder="Take a note..." rows="12"></textarea>
+    </div>
+
+    <div class="toggle-content">
+      <div class="input-field">
+          <label for="questionUrl">Question URL:</label>
+          <input type="text" id="questionUrl" name="questionUrl">
+      </div>
+      <button id="fetchButton">Fetch</button>
+      <div class="input-field">
+          <label for="codeInput">Code:</label>
+          <textarea id="codeInput" name="codeInput" rows="4" cols="50"></textarea>
+      </div>
+  </div>
+
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary btn-lg">+ Add Note</button>
+    </div>
+   
+
+  </form>
+
+</div>
+<script>
+  document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
+      const toggleContent = document.querySelector('.toggle-content');
+      if (this.checked) {
+          toggleContent.style.display = 'block';
+      } else {
+          toggleContent.style.display = 'none';
+      }
+  });
+</script>
