@@ -1,5 +1,4 @@
 <div class="container-fluid container-fluid-custom pb-5 mb-5">
-
   <div class="row mb-4">
     <div class="col">
       <nav aria-label="breadcrumb">
@@ -13,53 +12,106 @@
         <div class="form-check form-switch float-right">
           <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
           <label class="form-check-label" for="flexSwitchCheckDefault">Code</label>
-   
+        </div>
       </div>
-      
-      </div>
-
     </div>
   </div>
 
-
-  <form action="/dashboard/addNote" method="POST" class="position-relative">
-   
-    <div class="form-group mb-4 position-absolute" style="left:1px; top:1px; right: 1px;">
-      <input type="text" class="form-control fw-bold border-0 fs-4" id="title" name="title" placeholder="Title" required>
+  <form action="/dashboard/addNote" method="POST" class="mx-auto" style="width: 80%; margin-left: 10%; margin-right: 10%;">
+    <div class="form-group mb-2 toggle-content" style="display: none;">
+      <div class="d-flex align-items-center">
+        <label for="questionUrl" class="me-2">Question URL:</label>
+        <input type="text" class="form-control me-2" id="questionUrl" name="questionUrl" style="flex-grow: 1;">
+        <button type="button" id="fetchButton" class="btn btn-primary">View</button>
+      </div>
     </div>
 
-    <div class="form-group mb-4">
-      <textarea required class="form-control pt-5 fs-4" id="body" name="body" placeholder="Take a note..." rows="12"></textarea>
+    <div class="form-group mb-2">
+      <textarea class="form-control fw-bold border-0 fs-4" id="title" name="title" placeholder="Title" required style=" height: 8px;"></textarea>
     </div>
 
-    <div class="toggle-content">
-      <div class="input-field">
-          <label for="questionUrl">Question URL:</label>
-          <input type="text" id="questionUrl" name="questionUrl">
-      </div>
-      <button id="fetchButton">Fetch</button>
-      <div class="input-field">
-          <label for="codeInput">Code:</label>
-          <textarea id="codeInput" name="codeInput" rows="4" cols="50"></textarea>
-      </div>
-  </div>
+    <div id="fetchResult" class="form-group mb-2 bg-light px-2 "></div> 
 
+    <div class="form-group mb-2 toggle-content" style="display: none;">
+      <textarea id="codeInput" name="codeInput" class="form-control fs-4 " rows="10" placeholder="Code"></textarea>
+    </div>
+
+    <div class="form-group mb-2">
+      <textarea required class="form-control fs-4" id="body" name="body" placeholder="Take a note..." rows="6"></textarea>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" id="isShareable" name="isShareable" value="false">
+      <label class="form-check-label" for="isShareable">Shareable</label>
+    </div>
 
     <div class="form-group">
-      <button type="submit" class="btn btn-primary btn-lg">+ Add Note</button>
+      <button type="submit" class="btn btn-primary ">+ Add Note</button>
     </div>
-   
+
+    <input type="hidden" id="isCode" name="isCode" value="false">
 
   </form>
-
 </div>
+
 <script>
+document.getElementById('isShareable').addEventListener('change', function() {
+    const isChecked = this.checked;
+    document.getElementById('isShareable').value = isChecked ? 'true' : 'false';
+});
+
   document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
-      const toggleContent = document.querySelector('.toggle-content');
-      if (this.checked) {
-          toggleContent.style.display = 'block';
-      } else {
-          toggleContent.style.display = 'none';
-      }
+            const toggleContent = document.querySelector('.toggle-content');
+            toggleContent.style.display = this.checked ? 'block' : 'none';
+            document.getElementById('isCode').value = this.checked ? 'true' : 'false';
+        });
+
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            const questionUrl = document.getElementById('questionUrl').value;
+
+            // Send AJAX request to fetch data from backend
+            fetch('/dashboard/fetchQuestion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ questionUrl: questionUrl })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                return response.json(); // Assuming the response is JSON
+            })
+            .then(data => {
+                // Render fetched data based on its structure
+                let htmlContent = '';
+
+                // Check the type of data and construct HTML accordingly
+                
+                htmlContent = data.description;
+
+                // Set the innerHTML of fetchResult with the constructed HTML content
+                document.getElementById('fetchResult').innerHTML = htmlContent;
+                document.getElementById('title').innerText = data.title;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('Failed to fetch data. Please try again later.'); // Prompt user with an alert
+            });
+        });
+  document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
+    const toggleContent = document.querySelectorAll('.toggle-content');
+    toggleContent.forEach(element => {
+      element.style.display = this.checked ? 'block' : 'none';
+    });
   });
+
+  document.getElementById('title').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+  });
+
+  // Initialize the height of the title field based on its content
+  document.getElementById('title').style.height = (document.getElementById('title').scrollHeight) + 'px';
 </script>

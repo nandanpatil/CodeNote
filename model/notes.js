@@ -20,6 +20,14 @@ const noteSchema = mongoose.Schema({
     },
     solution:{
         type:String
+    },
+    isShareable:{
+        type:Boolean,
+        default:false
+    },
+    isQuestion:{
+        type:Boolean,
+        default:false
     }
 })
 

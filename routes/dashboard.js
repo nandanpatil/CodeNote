@@ -18,4 +18,5 @@ router.put('/item/:id',verifyUser,dashboard.updateNote)
 
 router.delete('/item-delete/:id',verifyUser,dashboard.deleteNote)
 
+router.post('/fetchQuestion',verifyUser,dashboard.getQuestion)
 module.exports = router
