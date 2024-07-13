@@ -10,7 +10,7 @@ const add = async(req,res)=>{
 
 const addNote = async(req,res)=>{
     try {
-        console.log(req.body)
+      //  console.log(req.body)
         const receivedTitle = req.body.title;
         const receivedBody = req.body.body;
         const receivedUserIdd = req.userId; // Assuming req.userId is correctly set elsewhere
@@ -28,7 +28,7 @@ const addNote = async(req,res)=>{
        isShareable:receivedIsShareable,
        isQuestion:receivedIsCode
     })
-    console.log(note)
+    //console.log(note)
     await note.save()
         res.redirect('/dashboard')
     } catch (error) {

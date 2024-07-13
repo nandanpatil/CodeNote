@@ -1,7 +1,7 @@
 const express  = require('express')
 const router = express.Router();
 const dashboard = require('../controllers/dashboardController');
-const { verifyUser } = require('../middlewares/authUser');
+const { verifyUser,canView } = require('../middlewares/authUser');
 
 // render all the notes 
 router.get('/',verifyUser,dashboard.dashboard)
@@ -12,11 +12,11 @@ router.get('/add',verifyUser,dashboard.add)
 // actually add the data now
 router.post('/addNote',verifyUser,dashboard.addNote)
 
-router.get('/item/:id',verifyUser,dashboard.viewNote)
+router.get('/item/:id',canView,dashboard.viewNote)
 
-router.put('/item/:id',verifyUser,dashboard.updateNote)
+router.put('/item-update/:id',verifyUser,dashboard.updateNote)
 
 router.delete('/item-delete/:id',verifyUser,dashboard.deleteNote)
 
-router.post('/fetchQuestion',verifyUser,dashboard.getQuestion)
+router.post('/fetchQuestion',dashboard.getQuestion)
 module.exports = router

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../model/user')
-
+const Note = require('../model/notes')
 
 const authUser = async(req,res,next)=>{
     try {
@@ -44,6 +44,23 @@ const authUser = async(req,res,next)=>{
     }
 }
 
+const canView = async(req,res,next)=>{
+  // console.log(req)
+  if(req.params.id){
+    const note =await Note.findById(req.params.id);
+    //console.log(note)
+    if(note.isShareable==true){
+      return res.render('dashboard/view-note',{
+        note,
+        layout:'../views/layouts/dashboard'
+    })
+    }
+    else if(!req.cookies)return res.render('404')
+  }
+  return verifyUser(req,res,next)
+  
+}
+
 
 const verifyUser = async(req,res,next)=>{
   try {
@@ -74,4 +91,4 @@ const verifyUser = async(req,res,next)=>{
 }
 
 
-module.exports = {authUser,verifyUser}
+module.exports = {authUser,verifyUser,canView}

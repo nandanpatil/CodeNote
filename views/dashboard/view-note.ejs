@@ -18,7 +18,7 @@
   </div>
 
 
-  <form action="/dashboard/item/<%= note._id %>?_method=PUT" method="POST" class="mx-auto" style="width: 80%; margin-left: 10%; margin-right: 10%;">
+  <form action="/dashboard/item-update/<%= note._id %>?_method=PUT" method="POST" class="mx-auto" style="width: 80%; margin-left: 10%; margin-right: 10%;">
       <% if(note.isQuestion){ %>
       <div class="d-flex align-items-center">
         <label for="questionUrl" class="me-2">Question URL:</label>
