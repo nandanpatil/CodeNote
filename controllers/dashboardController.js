@@ -49,7 +49,13 @@ const dashboard =async (req,res)=>{
     
         const start = (page - 1) * ITEMS_PER_PAGE;
         const end = start + ITEMS_PER_PAGE;
-        const paginatedItems = notes.slice(start, end);
+        const paginatedItems = notes.slice(start, end).map(note => {
+            // Ensure the description property exists and trim it if necessary
+            if (note.body && note.body.length > 160) {
+                note.body = note.body.substring(0, 160);
+            }
+            return note;
+        });
 
        res.render('dashboard/index', {
         userName,
@@ -60,6 +66,7 @@ const dashboard =async (req,res)=>{
     });
         
     } catch (error) {
+        console.log(error)
         res.status(500).render('404')
     }
    
