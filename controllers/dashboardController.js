@@ -82,6 +82,7 @@ const viewNote = async(req,res)=>{
 
 const updateNote = async(req,res)=>{
     try {
+        const note = await Note.findById({_id:req.params.id});
         const updated_title = req.body.title;
         const updated_body  = req.body.body;
         const updated_questionUrl = req.body.questionUrl;

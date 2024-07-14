@@ -55,10 +55,8 @@ const canView = async(req,res,next)=>{
         layout:'../views/layouts/dashboard'
     })
     }
-    else if(!req.cookies)return res.render('404')
   }
-  return verifyUser(req,res,next)
-  
+    next()  
 }
 
 
@@ -68,8 +66,8 @@ const verifyUser = async(req,res,next)=>{
   // console.log(token)
     if(!token){
       const locals={
-        title:"NodeJs Notes",
-        description:"Free Nodejs Notes App"
+        title:"CodeNote",
+        description:"Free Notes App"
     }
       return res.render('index',{
         locals,
@@ -90,5 +88,38 @@ const verifyUser = async(req,res,next)=>{
   }
 }
 
+const verifyUserNote = async(req,res,next)=>{
+  try {
+    const token = req.cookies.token
+  // console.log(token)
+    if(!token){
+      const locals={
+        title:"CodeNote",
+        description:"Free Notes App"
+    }
+      return res.render('index',{
+        locals,
+        layout:'../views/layouts/front-page'
+       });
+    }
+    const decoded = jwt.verify(token,process.env.JWT_SECRET)
+    const user = await User.findById(decoded._id)
+    if(!user){
+     return res.render('404');
+    }
+    const note  =await Note.findById(req.params.id);
+    if(!note)res.redirect('/');
+    if (note.userId.toString() !== user._id.toString()) {
+      return res.redirect('/');
+    }
+    req.userId=user._id;
+    req.username = user.username
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.render('404');
+  }
+}
 
-module.exports = {authUser,verifyUser,canView}
+
+module.exports = {authUser,verifyUser,canView,verifyUserNote}
