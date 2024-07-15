@@ -2,7 +2,7 @@ const Note = require('../model/notes')
 const axios = require('axios');
 const add = async(req,res)=>{
     try {
-        res.render('dashboard/add',{layout:'../views/layouts/dashboard'})
+        res.render('dashboard/add',{username:req.username,layout:'../views/layouts/dashboard'})
     } catch (error) {
        res.send(error) 
     }
@@ -58,7 +58,7 @@ const dashboard =async (req,res)=>{
         });
 
        res.render('dashboard/index', {
-        userName,
+        username:req.username,
         notes: paginatedItems,
         currentPage: page,
         totalPages: totalPages,
@@ -77,6 +77,7 @@ const viewNote = async(req,res)=>{
         const NoteId = req.params.id;
     const note = await Note.findById(NoteId);
    return res.render('dashboard/view-note',{
+    username:req.username,
         note,
         layout:'../views/layouts/dashboard'
     })
@@ -169,4 +170,44 @@ const getQuestion = async(req,res)=>{
     }
 }
 
-module.exports = {dashboard,addNote,add,viewNote,updateNote,deleteNote,getQuestion}
+const dashboardSearch = async (req, res) => {
+    try {
+      res.render("dashboard/search", {
+        username:req.username,
+        searchResults: "",
+        layout: "../views/layouts/dashboard",
+      });
+    } catch (error) {
+        res.render('404')
+    }
+  };
+
+  const dashboardSearchSubmit = async (req, res) => {
+    try {
+      let searchTerm = req.body.searchTerm;
+      const searchNoSpecialChars = searchTerm.replace(/[^a-zA-Z0-9 ]/g, "");
+  
+      const searchResults = await Note.find({
+        $or: [
+          { title: { $regex: new RegExp(searchNoSpecialChars, "i") } },
+          { body: { $regex: new RegExp(searchNoSpecialChars, "i") } },
+        ],
+      }).where({ userId: req.userId });
+  
+      res.render("dashboard/search", {
+        username:req.username,  
+        searchResults,
+        layout: "../views/layouts/dashboard",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  
+  
+
+
+
+module.exports = {dashboard,addNote,add,viewNote,updateNote,deleteNote,getQuestion,dashboardSearch,dashboardSearchSubmit}

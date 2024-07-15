@@ -34,6 +34,7 @@ const authUser = async(req,res,next)=>{
             secure: process.env.NODE_ENV === 'production' // Enable secure cookie in production
           });
           req.username = user.username
+          req.userId = user._id;
           next();
     } catch (error) {
         console.error('Error authenticating user:', error);
@@ -45,18 +46,26 @@ const authUser = async(req,res,next)=>{
 }
 
 const canView = async(req,res,next)=>{
+  try {
   // console.log(req)
   if(req.params.id){
     const note =await Note.findById(req.params.id);
-    //console.log(note)
+    if(!note) return res.redirect('404');
     if(note.isShareable==true){
       return res.render('dashboard/view-note',{
+        username:req.username,
         note,
         layout:'../views/layouts/dashboard'
     })
     }
+    else return next()
   }
-    next()  
+  else {
+   return next()
+  }
+  } catch (error) {
+   return res.redirect('/')
+  }  
 }
 
 
@@ -90,6 +99,7 @@ const verifyUser = async(req,res,next)=>{
 
 const verifyUserNote = async(req,res,next)=>{
   try {
+  
     const token = req.cookies.token
   // console.log(token)
     if(!token){
@@ -114,6 +124,7 @@ const verifyUserNote = async(req,res,next)=>{
     }
     req.userId=user._id;
     req.username = user.username
+    
     next();
   } catch (error) {
     console.log(error);

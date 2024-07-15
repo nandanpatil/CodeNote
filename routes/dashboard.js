@@ -19,4 +19,8 @@ router.put('/item-update/:id',verifyUserNote,dashboard.updateNote)
 router.delete('/item-delete/:id',verifyUserNote,dashboard.deleteNote)
 
 router.post('/fetchQuestion',dashboard.getQuestion)
+
+router.get('/search', verifyUser, dashboard.dashboardSearch);
+
+router.post('/search', verifyUser, dashboard.dashboardSearchSubmit);
 module.exports = router
