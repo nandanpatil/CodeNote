@@ -20,6 +20,8 @@ router.delete('/item-delete/:id',verifyUserNote,dashboard.deleteNote)
 
 router.post('/fetchQuestion',dashboard.getQuestion)
 
+router.post('/fetchComplexity',dashboard.getComplexity)
+
 router.get('/search', verifyUser, dashboard.dashboardSearch);
 
 router.post('/search', verifyUser, dashboard.dashboardSearchSubmit);

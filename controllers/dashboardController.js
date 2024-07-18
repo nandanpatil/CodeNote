@@ -1,5 +1,7 @@
 const Note = require('../model/notes')
 const axios = require('axios');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const add = async(req,res)=>{
     try {
         res.render('dashboard/add',{username:req.username,layout:'../views/layouts/dashboard'})
@@ -204,10 +206,34 @@ const dashboardSearch = async (req, res) => {
     }
   };
 
+  const getComplexity = async(req,res)=>{
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+        const header = "Provide me the space and time complexity for the below code and keep it short upto 3 lines per complexity and return result in html format by using <p> & <div> tags and some css\n ";
+      
+        const prompt = header+req.body.soltn;
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        if (text) {
+            res.json({
+                description: text
+            });
+        } else {
+            res.status(404).send('Something went wrong');
+        }
+        
+    } catch (error) {
+        res.status(500).send('An error occurred while calculating complexity');
+    }
+   
+    
+
+  }
 
   
   
 
 
 
-module.exports = {dashboard,addNote,add,viewNote,updateNote,deleteNote,getQuestion,dashboardSearch,dashboardSearchSubmit}
+module.exports = {dashboard,addNote,add,viewNote,updateNote,deleteNote,getQuestion,dashboardSearch,dashboardSearchSubmit,getComplexity}
